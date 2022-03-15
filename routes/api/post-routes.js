@@ -1,11 +1,13 @@
 const sequelize = require('../../config/connection');
 const router = require('express').Router();
-const { Post, User, Vote } = require('../../models');
+const { Post, User, Vote, Comment } = require('../../models');
 
 // get all posts
 router.get('/', (req, res) => {
     console.log('====================');
     Post.findAll({
+        // the 'order' property is assigned a nested array that orders by the 'created_at' column in descending order *** this is ommited later in the chapter, keeping this here for now
+        order: [['created_at', 'DESC']],
         attributes: [
             'id',
             'post_url',
@@ -13,11 +15,20 @@ router.get('/', (req, res) => {
             'created_at',
             [sequelize.literal('(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'), 'vote_count']
         ],
-        // the 'order' property is assigned a nested array that orders by the 'created_at' column in descending order *** this is ommited later in the chapter, keeping this here for now
-        order: [['created_at', 'DESC']],
         // we'll include the JOIN to the User table. We do this by adding the property 'include'
         // this is the foregin key here, but it is the primary key in the user table
         include: [
+            // include the Comment model here:
+            // Note that the included 'Comment' model will also include the 'User' model itself
+            //  - so it can attach the username to the comment
+            {
+                model: Comment,
+                attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
+                include: {
+                    model: User,
+                    attributes: ['username']
+                }
+            },
             {
                 model: User,
                 attributes: ['username']
@@ -38,6 +49,14 @@ router.get('/:id', (req, res) => {
         },
         attributes: ['id', 'post_url', 'title', 'created_at'],
         include: [
+            {
+                model: Comment,
+                attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
+                include: {
+                    model: User,
+                    attributes: ['username']
+                }
+            },
             {
                 model: User,
                 attributes: ['username']
@@ -129,7 +148,7 @@ router.delete('/:id', (req, res) => {
         })
         .catch(err => {
             console.log(err);
-            res.status(500).json(err)
+            res.status(500).json(err);
         });
 });
 

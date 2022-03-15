@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { User, Post, Vote } = require('../../models');
+const { User, Post, Vote, Comment } = require('../../models');
 
 // Get /api/users
 router.get('/', (req, res) => {
@@ -29,6 +29,15 @@ router.get('/:id', (req, res) => {
             {
                 model: Post,
                 attributes: ['id', 'title', 'post_url', 'created_at']
+            },
+            {
+                model: Comment,
+                attributes: ['id', 'comment_text', 'created_at'],
+                //  we're including the Post model on the Comment model so we can see on which posts this user commented.
+                include: {
+                    model: Post,
+                    attributes: ['title']
+                }
             },
             // to include the titles of the posts they've voted on
             // we had to include the 'Post' model, as we did before, but this time we had to contextualize it by going through the Vote table
