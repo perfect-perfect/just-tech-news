@@ -1,0 +1,11 @@
+<ol class="post-list">
+    {{#each posts as |post|}}
+    <li>
+		{{!-- That's right to use partials, 
+ 		- all we need is the '>' character
+ 		- followed by the name of the partial file 
+ 		- and the object we'll pass to the partial --}}
+		{{> post-info post }}	
+    </li>
+	{{/each}}
+</ol>

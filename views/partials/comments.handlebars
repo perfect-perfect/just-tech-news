@@ -1,0 +1,19 @@
+<div class="comments">
+    {{#each this}}
+    <section class="comment">
+        <div class="meta">
+            {{user.username}} on {{format_date created_at}}
+        </div>
+        <div class="text">
+            {{comment_text}}
+        </div>
+    </section>
+    {{/each}}
+</div>
+
+{{!-- - the partial was trying to reference 'post.comments' --}}
+{{!--   - we cannot do what we did last time because the 'comments' array can't be destructured into an easily accessed variable name --}}
+{{!--   - in Handlebars.js, we can use teh trusty keyword 'this' to refer to the parent object or array that's available --}}
+{{!--       - data passed to a template file is technically always part of 'this'  --}}
+{{!--           - but when dealing with objects we can simply access the object properties directly --}}
+{{!--               - 'vote_count' instead of 'this.vote_count' --}}

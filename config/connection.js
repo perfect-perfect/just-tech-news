@@ -6,6 +6,8 @@ require('dotenv').config();
 
 // cthis connection allows you use JawsDB on Heroku, which allows you to host your app on Heroku
 // create connection to our database, pass in your MySQL information for username and password
+// declaring a variable as const without setting it equal to a value will throw an error
+//  - that is why we use 'let'
 let sequelize;
 
 if (process.env.JAWSDB_URL) {

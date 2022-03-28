@@ -71,11 +71,20 @@ router.post('/', (req, res) => {
         email: req.body.email,
         password: req.body.password
     })
-        .then(dbUserData => res.json(dbUserData))
-        .catch(err => {
-            console.log(err);
-            res.status(500).json(err);
-        });
+        .then(dbUserData => {
+            // this gives our server easy access to the user's 'user_id', 'username', and a Boolean describing whether or not the user is logged in
+            // this will save the user's info to the session. Also makes the user info always accesible from req.session
+            // we want to make sure the session is created before we send the response back, so we're wrapping the variables in a callback 
+            req.session.save(() => {
+                req.session.user_id = dbUserData.id;
+                req.session.username = dbUserData.username;
+                // we use loggedIn later to determine whether a user is logged in
+                req.session.loggedIn = true;
+
+                res.json(dbUserData);
+            });
+
+        })
 });
 
 // login verification
@@ -111,9 +120,31 @@ router.post('/login', (req, res) => {
             res.status(400).json({ message: 'Incorrect password!' });
             return;
         }
-        // if there is a match, the conditional statement block is ignored, and a response with the data and the message "You are now logged in." is sent instead.
-        res.json({ user: dbUserData, message: 'You are now logged in!' });
+        // creates the session
+        req.session.save(() => {
+            // declare session variables
+            req.session.user_id = dbUserData.id;
+            req.session.username = dbUserData.username;
+            req.session.loggedIn = true;
+        
+            // if there is a match, the conditional statement block is ignored, and a response with the data and the message "You are now logged in." is sent instead.
+            res.json({ user: dbUserData, message: 'You are now logged in!' });
+        });
     });
+});
+
+// Logout
+// we just a javascript function and fetch later to trigger this route if someone clicks on the logout button
+router.post('/logout', (req, res) => {
+    if (req.session.loggedIn) {
+        // we can then use the 'destroy()' method to clear the session
+        req.session.destroy(() => {
+            res.status(204).end();
+        });
+    }
+    else {
+        res.status(404).end();
+    }
 });
 
 // UPDATE User

@@ -1,0 +1,25 @@
+{{> post-info post}}
+
+{{#if loggedIn}}
+{{!-- If checks if the value provided is truthy, aka does it exist and have a value.  --}}
+{{!-- we create 'loggedIn' when we sign in and start a session.  --}}
+{{!-- when then throw the variable in here when we res.render('single-post',...), so we can use it in here --}}
+<form class="comment-form">
+    <div>
+        <textarea name="comment-body"></textarea>
+    </div>
+
+    <div>
+        <button type="submit">add comment</button>
+        <button type="button" class="upvote-btn">upvote</button>
+    </div>
+</form>
+{{/if}}
+
+{{> comments post.comments}}
+
+
+{{#if loggedIn}}
+<script src="/javascript/comment.js"></script>
+<script src="/javascript/upvote.js"></script>
+{{/if}}

@@ -60,7 +60,7 @@ User.init(
         hooks: {
             // set up beforeCreate() lifecycle "hook" functionality
             // we use the 'beforeCreate()' hook to execute the 'bcrypt' hash function on the plaintext password
-            //- the 'asyn' keyword is used as a prefix to the function that contains the asynchronous function
+            //- the 'async' keyword is used as a prefix to the function that contains the asynchronous function
             //  await can be used to prefix the async function, which will then gracefully assign the value from the response to the newUserData's password property
             async beforeCreate(newUserData) {
                 // we assign newUserData.password to the hashed pasword, but it awaits it before returning it
